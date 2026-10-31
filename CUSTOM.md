@@ -3,6 +3,19 @@
 This fork provides the Mac interface for the user's existing Surface Server.
 The Surface stays on the official release. The custom app uses the released server API.
 
+## Working branches
+
+`main` is the default branch of this fork and contains the personal app setup. Start each new
+feature branch from `main`, for example:
+
+```sh
+git switch main
+git switch -c feature/working-animation
+```
+
+Merge completed changes into `main`. `upstream-main` preserves the fork's previous official
+code snapshot. The `upstream` remote points to the official repository for future updates.
+
 ## Installed app
 
 - App: `/Applications/OpenBot.app`
