@@ -33,7 +33,7 @@ Quit the installed custom app before replacing it. Then install and open the bui
 
 ```sh
 ditto "dist/mac-arm64/OpenBot.app" "/Applications/OpenBot.app"
-open -b app.openbot.custom
+open -a "/Applications/OpenBot.app"
 ```
 
 Use `dist/mac` on an Intel Mac. The installed build does not need this checkout, Bun, Node.js,
