@@ -1,6 +1,6 @@
 ### Added
 
-- Install the personal Mac build as OpenBot Custom with its own bundle ID and settings folder.
+- Install the personal Mac build as OpenBot with its own bundle ID and settings folder.
 
 ### Changed
 

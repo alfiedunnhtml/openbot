@@ -36,7 +36,7 @@ const EXPECTED_MACOS_ICON_FILES = [
 const architecture = process.arch === "arm64" ? "arm64" : process.arch === "x64" ? "x64" : null;
 if (!architecture) throw new Error(`OpenBot does not ship for macOS ${process.arch}.`);
 const machOArchitecture = architecture === "arm64" ? "arm64" : "x86_64";
-const productName = "OpenBot Custom";
+const productName = "OpenBot";
 const appPath = resolve(
   process.argv[2] ?? join(architecture === "arm64" ? "dist/mac-arm64" : "dist/mac", `${productName}.app`),
 );

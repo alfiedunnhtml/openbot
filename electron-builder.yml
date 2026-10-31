@@ -1,5 +1,5 @@
 appId: app.openbot.custom
-productName: OpenBot Custom
+productName: OpenBot
 copyright: Copyright © 2026 Synthetify Labs spółka z ograniczoną odpowiedzialnością
 protocols:
   - name: OpenBot invitations
@@ -122,7 +122,7 @@ mac:
   entitlementsInherit: build/entitlements.mac.inherit.plist
   darkModeSupport: true
   extendInfo:
-    CFBundleDisplayName: OpenBot Custom
+    CFBundleDisplayName: OpenBot
     CFBundleIconName: Icon
     NSMicrophoneUsageDescription: OpenBot uses the microphone to transcribe voice prompts locally on this Mac.
     # Computer Use runs the driver as a child process, so macOS asks for both grants in OpenBot's
