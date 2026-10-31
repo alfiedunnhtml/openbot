@@ -226,6 +226,8 @@ if (configureLinuxPasswordStore())
   logger.info(`No Chromium keyring for "${process.env.XDG_CURRENT_DESKTOP ?? ""}"; using gnome-libsecret.`);
 if (commandLineUserDataDirectory) {
   app.setPath("userData", resolve(commandLineUserDataDirectory));
+} else if (app.isPackaged && process.platform === "darwin") {
+  app.setPath("userData", join(app.getPath("appData"), "OpenBot Custom"));
 } else if (!app.isPackaged) {
   app.setPath(
     "userData",
@@ -238,6 +240,7 @@ if (commandLineUserDataDirectory) {
     ),
   );
 }
+// Keep the existing macOS secure-storage name; the bundle has its own display name and ID.
 app.setName("OpenBot");
 app.enableSandbox();
 if (process.platform === "win32") app.setAppUserModelId("app.openbot.desktop");

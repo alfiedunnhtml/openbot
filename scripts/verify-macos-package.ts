@@ -1,6 +1,6 @@
 import { execFileSync, spawn, spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
-import { access, lstat, mkdtemp, readFile, rm } from "node:fs/promises";
+import { access, lstat, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { setTimeout as delay } from "node:timers/promises";
@@ -36,11 +36,12 @@ const EXPECTED_MACOS_ICON_FILES = [
 const architecture = process.arch === "arm64" ? "arm64" : process.arch === "x64" ? "x64" : null;
 if (!architecture) throw new Error(`OpenBot does not ship for macOS ${process.arch}.`);
 const machOArchitecture = architecture === "arm64" ? "arm64" : "x86_64";
+const productName = "OpenBot Custom";
 const appPath = resolve(
-  process.argv[2] ?? (architecture === "arm64" ? "dist/mac-arm64/OpenBot.app" : "dist/mac/OpenBot.app"),
+  process.argv[2] ?? join(architecture === "arm64" ? "dist/mac-arm64" : "dist/mac", `${productName}.app`),
 );
 const contentsPath = resolve(appPath, "Contents");
-const executablePath = resolve(contentsPath, "MacOS/OpenBot");
+const executablePath = resolve(contentsPath, "MacOS", productName);
 const resourcesPath = resolve(contentsPath, "Resources");
 const packagedIconPath = resolve(resourcesPath, "icon.icns");
 const sourceIconPath = resolve("build/icon-production.icns");
@@ -115,13 +116,15 @@ await assertAbsent(
 
 const plist = JSON.parse(run("plutil", ["-convert", "json", "-o", "-", plistPath]));
 if (!isDynamicRecord(plist)) throw new Error("Info.plist is not a JSON object.");
-expectEqual(plist.CFBundleDisplayName, "OpenBot", "display name");
-expectEqual(plist.CFBundleExecutable, "OpenBot", "executable name");
-expectEqual(plist.CFBundleIdentifier, "app.openbot.desktop", "bundle identifier");
+expectEqual(plist.CFBundleDisplayName, productName, "display name");
+expectEqual(plist.CFBundleName, productName, "helper application name");
+expectEqual(plist.CFBundleExecutable, productName, "executable name");
+expectEqual(plist.CFBundleIdentifier, "app.openbot.custom", "bundle identifier");
 expectEqual(plist.CFBundleIconFile, "icon.icns", "application icon");
 expectEqual(plist.CFBundleIconName, "Icon", "macOS 26 application icon");
 expectEqual(plist.LSMinimumSystemVersion, "13.0", "minimum macOS version");
-expectEqual(plist.ElectronTeamID, "ZTRDTUL87R", "Apple Team ID");
+expectEqual(plist.ElectronTeamID, undefined, "official Apple Team ID");
+await assertAbsent(resolve(resourcesPath, "app-update.yml"));
 if (!Array.isArray(plist.NSUserActivityTypes) || !plist.NSUserActivityTypes.includes("NSUserActivityTypeBrowsingWeb")) {
   throw new Error("The Universal Links activity type is missing.");
 }
@@ -197,6 +200,12 @@ for (const [fuse, expected] of expectedFuses) {
 
 await verifyLaunch(executablePath);
 
+await mkdir(resolve(".openbot-build/custom"), { recursive: true });
+await writeFile(
+  resolve(".openbot-build/custom/package-verification.json"),
+  JSON.stringify({ appPath, version: packageJson.version, architecture, officialUpdates: false, pass: true }, null, 2),
+);
+
 logger.info(`Verified ${appPath}`);
 logger.info(
   `OpenBot ${String(packageJson.version)} · ${machOArchitecture} · icon · GPL remote runtime · WebRTC remote stack · ASAR integrity · hardened fuses · launch`,
@@ -214,7 +223,7 @@ async function assertAbsent(path: string): Promise<void> {
   } catch {
     return;
   }
-  throw new Error(`Provider runtime must not be packaged: ${path}`);
+  throw new Error(`Unexpected packaged file: ${path}`);
 }
 
 async function verifyPackagedIcon(packagedPath: string, sourcePath: string): Promise<void> {

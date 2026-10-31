@@ -1,5 +1,5 @@
-appId: app.openbot.desktop
-productName: OpenBot
+appId: app.openbot.custom
+productName: OpenBot Custom
 copyright: Copyright © 2026 Synthetify Labs spółka z ograniczoną odpowiedzialnością
 protocols:
   - name: OpenBot invitations
@@ -18,10 +18,8 @@ electronFuses:
   onlyLoadAppFromAsar: true
   loadBrowserProcessSpecificV8Snapshot: false
   grantFileProtocolExtraPrivileges: false
-publish:
-  provider: github
-  owner: nightly-labs
-  repo: openbot
+# This personal build is updated from the fork, never from official release binaries.
+publish: null
 files:
   - out/**/*
   - package.json
@@ -124,8 +122,8 @@ mac:
   entitlementsInherit: build/entitlements.mac.inherit.plist
   darkModeSupport: true
   extendInfo:
+    CFBundleDisplayName: OpenBot Custom
     CFBundleIconName: Icon
-    ElectronTeamID: ZTRDTUL87R
     NSMicrophoneUsageDescription: OpenBot uses the microphone to transcribe voice prompts locally on this Mac.
     # Computer Use runs the driver as a child process, so macOS asks for both grants in OpenBot's
     # name and shows these sentences. Under the hardened runtime, macOS shows the Automation prompt
